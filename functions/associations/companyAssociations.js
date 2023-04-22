@@ -11,6 +11,13 @@ Users.hasMany(Company,{
 });
 Company.belongsTo(Users);
 
+Company.hasMany(Users,{
+    foriegnKey:{
+        type: DataTypes.INTEGER
+    }
+});
+Users.belongsTo(Company);
+
 Company.hasMany(Agents,{
     foriegnKey:{
         type: DataTypes.UUID,
