@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const Op = Sequelize.Op;
 
 const { Users } = require('../models');
-const {Agents,Sales,Clients} = require('../functions/associations/clientAssociations')
+const {Sales,Clients} = require('../functions/associations/clientAssociations')
 
 
 module.exports = routes;

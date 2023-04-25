@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Types = sequelize.define("Types", {
+const Options = sequelize.define("Options", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -10,31 +10,31 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         sources:{
-            type:DataTypes.STRING,
+            type:DataTypes.JSON,
             allowNull: true,
         },
         resources:{
-            type:DataTypes.STRING,
+            type:DataTypes.JSON,
             allowNull: true, 
         },
         countries:{
-            type:DataTypes.STRING,
+            type:DataTypes.JSON,
             allowNull: true,  
         },
         job_type:{
-            type:DataTypes.STRING,
+            type:DataTypes.JSON,
             allowNull: true,  
         },
         job_status:{
-            type:DataTypes.STRING,
+            type:DataTypes.JSON,
             allowNull: true,  
         },
         job_roles:{
-            type:DataTypes.STRING,
+            type:DataTypes.JSON,
             allowNull: true,  
         },
     });
 
 
-    return Types ;
+    return Options ;
 };

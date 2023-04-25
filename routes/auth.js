@@ -51,9 +51,9 @@ routes.post("/Login", async (req, res) => {
           const payload = {
             type: userVerification.type,
             email: userVerification.email,
-            name: `${userVerification.fullname}`,
+            name: `${userVerification.name}`,
             loginId: `${userVerification.id}`,
-            role: `${userVerification.role}`,
+            designation: `${userVerification.designation}`,
           };
           jwt.sign(
             payload,
@@ -81,7 +81,7 @@ routes.post("/Login", async (req, res) => {
 //SignUP API
 routes.post("/signUp", async (req, res) => {
   // const otp = Math.floor(1000 + Math.random() * 9000);
-  const { type, data } = req.body;
+  const { type,designation,data } = req.body;
   try {
     if (type == "agent") {
       const customerVerification = await Users.findOne({
@@ -91,8 +91,7 @@ routes.post("/signUp", async (req, res) => {
         res.send("Already Exists");
       } else {
         const customer = await Users.create({
-          fullname: fullname,
-          company: company,
+          name: data.fname+' '+data.lname,
           phone: phone,
           type: "customer",
           password: otp,
@@ -110,13 +109,13 @@ routes.post("/signUp", async (req, res) => {
       } else {
         try {
           const payload = await Users.create({
-            fullname: data.fname+' '+data.lname,
+            name: data.fname+' '+data.lname,
             email: data.email,
             phone: data.phone,
             password: data.password,
-            role: "pending",
+            designation: "pending",
             type: type,
-            company: "pending",
+            designation:designation,
             signature: "pending",
           });
           res.status(200).send({ status: "success", payload });

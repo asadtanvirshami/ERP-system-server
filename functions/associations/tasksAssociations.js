@@ -1,14 +1,14 @@
 const { DataTypes } = require('sequelize');
 
-const {Sales, Clients } = require("../../models/");
+const { Tasks, Users } = require("../../models");
 
 // ============================  SALES  TO AGENTS ASSOCIATIONS ============================ //
 
-Clients.hasMany(Sales,{
+Tasks.hasMany(Users,{
     foriegnKey:{
         type: DataTypes.INTEGER
     }
 });
-Sales.belongsTo(Clients);
+Users.hasMany(Tasks);
 
-module.exports = {Sales,Clients}
+module.exports = {Tasks,Users }

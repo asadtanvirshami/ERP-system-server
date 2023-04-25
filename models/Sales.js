@@ -58,13 +58,6 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
-    closed_by: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
     assigned_to: {
       type: DataTypes.STRING,
       allowNull: false,

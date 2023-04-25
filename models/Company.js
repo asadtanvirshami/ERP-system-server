@@ -30,12 +30,6 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
-        no_of_employees:{
-            type:DataTypes.INTEGER
-        },
-        no_of_partners:{
-            type:DataTypes.INTEGER
-        },
         location:{
             type:DataTypes.STRING,
             allowNull: false,
@@ -49,9 +43,6 @@ module.exports = (sequelize, DataTypes) => {
             validate:{
                 notEmpty: true
             }
-        },
-        revenue:{
-            type:DataTypes.INTEGER
         },
         legal_doc:{
             type:DataTypes.STRING

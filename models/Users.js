@@ -9,16 +9,12 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
-        fullname:{
+        name:{
             type:DataTypes.STRING,
             allowNull: false,
             validate:{
                 notEmpty: true
             }
-        },
-        company:{
-            type:DataTypes.STRING,
-            allowNull: true,
         },
         phone:{
             type:DataTypes.STRING,
@@ -48,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
-        role:{
+        designation:{
             type:DataTypes.STRING,
             allowNull: true,
         },

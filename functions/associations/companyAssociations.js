@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 
-const { Agents, Company, Users, Sales, Invoices, Clients } = require("../../models/");
+const {Company, Users, Sales, Invoices, Clients } = require("../../models/");
 
 // ============================ AGENT, SALES, Invoices, Clients & USERS TO COMPANY ASSOCIATIONS ============================ //
 
@@ -17,14 +17,6 @@ Company.hasMany(Users,{
     }
 });
 Users.belongsTo(Company);
-
-Company.hasMany(Agents,{
-    foriegnKey:{
-        type: DataTypes.UUID,
-        allowNull:false
-    }
-});
-Agents.belongsTo(Company);
 
 Company.hasMany(Sales,{
     foriegnKey:{
@@ -50,4 +42,4 @@ Company.hasMany(Clients,{
 });
 Clients.belongsTo(Company);
 
-module.exports = { Agents,Company,Users,Sales,Invoices }
+module.exports = {Company, Users, Sales, Invoices, Clients}

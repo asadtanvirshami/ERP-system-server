@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const Op = Sequelize.Op;
 
 const { Company } = require('../models');
-const {Agents,Sales,Invoices} = require('../functions/associations/companyAssociations');
+const {Sales,Invoices} = require('../functions/associations/companyAssociations');
 
 //Mail Function
 async function mailFunc(x,otp) {
