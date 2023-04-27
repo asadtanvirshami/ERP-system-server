@@ -11,11 +11,4 @@ Sales.hasOne(Invoices,{
 });
 Invoices.belongsTo(Sales);
 
-Sales.hasMany(Users,{
-    foriegnKey:{
-        type: DataTypes.INTEGER
-    }
-});
-Users.belongsTo(Sales);
-
 module.exports = {Sales,Invoices,Users }
