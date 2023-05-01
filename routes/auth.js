@@ -54,6 +54,7 @@ routes.post("/Login", async (req, res) => {
             name: `${userVerification.name}`,
             loginId: `${userVerification.id}`,
             designation: `${userVerification.designation}`,
+            companyId: `${userVerification.CompanyId}`
           };
           jwt.sign(
             payload,
@@ -81,23 +82,28 @@ routes.post("/Login", async (req, res) => {
 //SignUP API
 routes.post("/signUp", async (req, res) => {
   // const otp = Math.floor(1000 + Math.random() * 9000);
-  const { type,designation,data } = req.body;
+  const { type,designation,data,id } = req.body;
   try {
     if (type == "agent") {
-      const customerVerification = await Users.findOne({
-        where: { phone: phone },
+      const agentVerification = await Users.findOne({
+        where: { email: data.email },
       });
-      if (customerVerification) {
+      if (agentVerification) {
         res.send("Already Exists");
       } else {
-        const customer = await Users.create({
-          name: data.fname+' '+data.lname,
-          phone: phone,
-          type: "customer",
-          password: otp,
+        const payload = await Users.create({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          password: data.password,
+          designation: "pending",
+          type: type,
+          designation:data.designation,
+          signature: "pending",
+          CompanyId:id
         });
-        mailFunc(customer.phone, otp);
-        res.status(200).json(customer);
+        // mailFunc(customer.phone, otp);
+        res.status(200).send({ status: "success", payload });
       }
     } else if (type == "admin") {
       const adminVerification = await Users.findOne({
@@ -109,7 +115,7 @@ routes.post("/signUp", async (req, res) => {
       } else {
         try {
           const payload = await Users.create({
-            name: data.fname+' '+data.lname,
+            name: data.name,
             email: data.email,
             phone: data.phone,
             password: data.password,
