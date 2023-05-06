@@ -13,6 +13,7 @@ const invoicesRoute = require('./routes/invoices')
 const optionsRoute = require('./routes/options')
 const salesRoute = require('./routes/sales')
 const userRoute = require('./routes/user')
+const taskRoute = require('./routes/tasks')
 
 app.use(morgan('tiny'));
 
@@ -29,6 +30,7 @@ app.use("/auth", authRoute);
 app.use("/client", clientRoute);
 app.use("/sales", salesRoute);
 app.use("/user", userRoute);
+app.use("/tasks", taskRoute);
 app.use("/company", companyRoute);
 app.use("/invoices", invoicesRoute);
 app.use("/options", optionsRoute);

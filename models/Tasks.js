@@ -1,43 +1,98 @@
 module.exports = (sequelize, DataTypes) => {
-    const Sales = sequelize.define("Sales", {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
+  const Tasks = sequelize.define("Tasks", {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
-      type: {
-        type: DataTypes.STRING,
-        allowNull: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: true,
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
-      status: {
-        type: DataTypes.STRING,
-        allowNull: true
+    },
+    start_date: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
-      startDate: {
-        type: DataTypes.STRING,
-        allowNull: true
+    },
+    start_time: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
-      endDate: {
-        type: DataTypes.STRING,
-        allowNull: true
+    },
+    deadline: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
-      createdBy:{
-        type: DataTypes.STRING,
-        allowNull: true
+    },
+    end_date: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
-      assignedTo:{
-        type: DataTypes.STRING,
-        allowNull: true
-      }
-    });
-    return Sales;
-  };
-  
+    },
+    end_time: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    bonus: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    priority: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+  });
+  return Tasks;
+};
