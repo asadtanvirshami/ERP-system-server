@@ -44,7 +44,7 @@ routes.get("/company_data", async (req, res) => {
   const { id, offset } = req.headers;
   try {
     const promises = [
-      Users.findAll({ where: { CompanyId: id }, offset: offset||0, limit: 10  }),
+      Users.findAll({ where: { CompanyId: id, type:'agent' }, offset: offset||0, limit: 10  }),
       Sales.findAll({ where: { CompanyId: id }, offset: offset||0, limit: 10 }),
       Clients.findAll({ where: { CompanyId: id}, offset: offset||0, limit: 10  }),
     ];
@@ -81,6 +81,7 @@ routes.post("/companyReg", async (req, res) => {
           no_of_partners: 0,
           legal_doc: "none",
         });
+         await Users.update({CompanyId:payload.id},{where:{id:id}})
         res.status(200).json({ status: "success", payload });
       } catch (e) {
         console.log(e);
