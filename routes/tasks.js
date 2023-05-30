@@ -23,7 +23,8 @@ routes.post("/createTasks", async (req, res) => {
         code:task_code,
         status:'pending',
         active:true,
-        UserId:rqBody.userId
+        UserId:rqBody.userId,
+        CompanyId:rqBody.companyId
     })
   })
 

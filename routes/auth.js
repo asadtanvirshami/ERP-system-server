@@ -36,7 +36,6 @@ async function mailFunc(x, otp) {
 }
 //Login API
 routes.post("/Login", async (req, res) => {
-  console.log(req.body);
   const { data } = req.body;
 
   if (data.email && data.password) {
@@ -103,10 +102,10 @@ routes.post("/signUp", async (req, res) => {
             CompanyId: id,
           });
           // mailFunc(customer.phone, otp);
-          res.status(200).send({ status: "success", payload });
+          res.status(200).send({ status: "success", payload:payload });
         } catch (e) {
           res.json({
-            status: "error1",
+            status: "error",
             message: "Something Went Wrong Please Try Again",
           });
         }

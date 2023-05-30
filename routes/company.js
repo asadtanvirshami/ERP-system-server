@@ -49,7 +49,7 @@ routes.get("/company_data", async (req, res) => {
       Clients.findAll({ where: { CompanyId: id}, offset: offset||0, limit: 10  }),
     ];
     Promise.all(promises).then((data) => {
-      res.status(200).send(data);
+      res.status(200).send({payload:data,message:'success'});
     });
   } catch (e) {
     error;
