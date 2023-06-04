@@ -23,7 +23,7 @@ routes.get("/getAllClients", async (req, res) => {
 
 routes.post("/createClient", async (req, res) => {
   console.log(req.body);
-  const { data } = req.body;
+  const { data, id } = req.body;
   try {
     const payload = await Clients.create(
       {
@@ -36,7 +36,7 @@ routes.post("/createClient", async (req, res) => {
         source: data.source,
         source_link: data.source_link,
         comments: data.comments,
-        CompanyId: data.CompanyId,
+        CompanyId: id,
       },
     );
     res.status(200).send({ message: "success", payload: payload });
