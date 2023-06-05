@@ -16,7 +16,13 @@ routes.get("/getAllTasks", async (req, res) => {
     where: { CompanyId: id },
     offset: offset || 0,
     limit: 10,
+    include: [
+      {
+        model: Users,
+      },
+    ],
   });
+  Users;
   res.status(200).send({ payload: payload });
 });
 
@@ -35,7 +41,7 @@ routes.post("/createTask", async (req, res) => {
     companyId,
   } = req.body;
   try {
-    const payload =  await Tasks.create({
+    const payload = await Tasks.create({
       title: title,
       description: description,
       priority: priority,
@@ -51,7 +57,13 @@ routes.post("/createTask", async (req, res) => {
       UserId: userId,
       CompanyId: companyId,
     });
-    res.status(200).send({ status: "success", message: "Task is successfully created!", payload:payload });
+    res
+      .status(200)
+      .send({
+        status: "success",
+        message: "Task is successfully created!",
+        payload: payload,
+      });
   } catch (e) {
     res.status(304).send({ status: "error", message: "Error Occured" });
     console.log("Error Occured", e);
@@ -73,7 +85,7 @@ routes.post("/createTask", async (req, res) => {
     companyId,
   } = req.body;
   try {
-    const payload =  await Tasks.update({
+    const payload = await Tasks.update({
       title: title,
       description: description,
       priority: priority,
@@ -89,7 +101,13 @@ routes.post("/createTask", async (req, res) => {
       UserId: userId,
       CompanyId: companyId,
     });
-    res.status(200).send({ status: "success", message: "Task is successfully created!", payload:payload });
+    res
+      .status(200)
+      .send({
+        status: "success",
+        message: "Task is successfully created!",
+        payload: payload,
+      });
   } catch (e) {
     res.status(304).send({ status: "error", message: "Error Occured" });
     console.log("Error Occured", e);
@@ -107,7 +125,9 @@ routes.post("/assignTask", async (req, res) => {
   });
   try {
     await Promise.all(promises);
-    res.status(200).send({ status: "success", message: "Task is successfully assigned!" });
+    res
+      .status(200)
+      .send({ status: "success", message: "Task is successfully assigned!" });
   } catch (e) {
     res.status(304).send({ status: "error", message: "Error Occured" });
     console.log("Error Occured", e);
@@ -121,7 +141,7 @@ routes.delete("/deleteTask", async (req, res) => {
       where: { id: `${id}` },
       force: true,
     });
-   await UserTasks.destroy({
+    await UserTasks.destroy({
       where: { TaskId: `${id}` },
       force: true,
     });
