@@ -22,9 +22,25 @@ routes.get("/getAllTasks", async (req, res) => {
       },
     ],
   });
-  Users;
   res.status(200).send({ payload: payload });
 });
+// const payload = await UserTasks.findAll({
+//   where: { CompanyId: id },
+//   offset: offset || 0,
+//   limit: 10,
+//   include: [
+//     {
+//       model: Users,
+//     },
+//     {
+//       model: Tasks,
+//       include: [{ model: Users }],
+//     },
+//   ],
+// });
+// Users;
+// res.status(200).send({ payload: payload });
+// });
 
 routes.post("/createTask", async (req, res) => {
   console.log(req.body);
@@ -70,53 +86,54 @@ routes.post("/createTask", async (req, res) => {
   }
 });
 
-routes.post("/createTask", async (req, res) => {
-  console.log(req.body);
-  const task_code = Math.floor(100 + Math.random() * 9000);
-  const {
-    title,
-    description,
-    priority,
-    deadline,
-    startTime,
-    startDate,
-    bonus,
-    userId,
-    companyId,
-  } = req.body;
-  try {
-    const payload = await Tasks.update({
-      title: title,
-      description: description,
-      priority: priority,
-      deadline: deadline,
-      start_date: startDate,
-      start_time: startTime,
-      end_date: "pending",
-      end_time: "pending",
-      bonus: bonus,
-      code: task_code,
-      status: "pending",
-      active: true,
-      UserId: userId,
-      CompanyId: companyId,
-    });
-    res
-      .status(200)
-      .send({
-        status: "success",
-        message: "Task is successfully created!",
-        payload: payload,
-      });
-  } catch (e) {
-    res.status(304).send({ status: "error", message: "Error Occured" });
-    console.log("Error Occured", e);
-  }
-});
+// routes.post("/createTask", async (req, res) => {
+//   console.log(req.body);
+//   const task_code = Math.floor(100 + Math.random() * 9000);
+//   const {
+//     title,
+//     description,
+//     priority,
+//     deadline,
+//     startTime,
+//     startDate,
+//     bonus,
+//     userId,
+//     companyId,
+//   } = req.body;
+//   try {
+//     const payload = await Tasks.update({
+//       title: title,
+//       description: description,
+//       priority: priority,
+//       deadline: deadline,
+//       start_date: startDate,
+//       start_time: startTime,
+//       end_date: "pending",
+//       end_time: "pending",
+//       bonus: bonus,
+//       code: task_code,
+//       status: "pending",
+//       active: true,
+//       UserId: userId,
+//       CompanyId: companyId,
+//     });
+//     res
+//       .status(200)
+//       .send({
+//         status: "success",
+//         message: "Task is successfully created!",
+//         payload: payload,
+//       });
+//   } catch (e) {
+//     res.status(304).send({ status: "error", message: "Error Occured" });
+//     console.log("Error Occured", e);
+//   }
+// });
 
 routes.post("/assignTask", async (req, res) => {
   console.log(req.body);
-  var promises = req.body.map((rqBody) => {
+  await Tasks.update({asignees:req.body.asignees},{where:{id:req.body.taskId}})
+  var promises = await req.body.data.map((rqBody) => {
     return UserTasks.create({
       UserId: rqBody.userId,
       CompanyId: rqBody.companyId,

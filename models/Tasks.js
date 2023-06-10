@@ -93,6 +93,10 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
+    asignees: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
   });
   return Tasks;
 };
