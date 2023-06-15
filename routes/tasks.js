@@ -11,7 +11,13 @@ const { UserTasks } = require("../functions/associations/userTaskAssociations");
 
 routes.get("/getAllTasks", async (req, res) => {
   const { id, offset } = req.headers;
-
+  const users = await Users.findAll(
+  {
+    where: { CompanyId: id, type:'agent'},
+    offset: offset || 0,
+    limit: 10,
+  }
+  )
   const payload = await Tasks.findAll({
     where: { CompanyId: id },
     offset: offset || 0,
@@ -22,7 +28,7 @@ routes.get("/getAllTasks", async (req, res) => {
       },
     ],
   });
-  res.status(200).send({ payload: payload });
+  res.status(200).send({ payload: payload, users:users   });
 });
 
 // const payload = await UserTasks.findAll({
