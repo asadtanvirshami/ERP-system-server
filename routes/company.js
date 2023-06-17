@@ -41,20 +41,39 @@ async function mailFunc(x, otp) {
 }
 
 routes.get("/company_data", async (req, res) => {
-  const { id, offset } = req.headers;
+  const { id, offset = 0 } = req.headers;
+
   try {
-    const promises = [
-      Users.findAll({ where: { CompanyId: id, type:'agent' }, offset: offset||0, limit: 10  }),
-      Sales.findAll({ where: { CompanyId: id }, offset: offset||0, limit: 10 }),
-      Clients.findAll({ where: { CompanyId: id}, offset: offset||0, limit: 10  }),
-    ];
-    Promise.all(promises).then((data) => {
-      res.status(200).send({payload:data,message:'success'});
+    const usersPromise = Users.findAll({
+      where: { CompanyId: id, type: 'agent' },
+      offset: offset,
+      limit: 10
     });
-  } catch (e) {
-    error;
+
+    const salesPromise = Sales.findAll({
+      where: { CompanyId: id },
+      offset: offset,
+      limit: 10
+    });
+
+    const clientsPromise = Clients.findAll({
+      where: { CompanyId: id },
+      offset: offset,
+      limit: 10
+    });
+
+    const promise = await Promise.all([
+      usersPromise,
+      salesPromise,
+      clientsPromise
+    ]);
+
+    res.status(200).send({ payload: promise, message: 'success' });
+  } catch (error) {
+    res.status(500).send({ message: 'An error occurred', error });
   }
 });
+
 
 //SignUP API
 routes.post("/companyReg", async (req, res) => {
