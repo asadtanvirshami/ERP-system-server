@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 
-const { Tasks, Users, Company } = require("../../models");
+const { Tasks, Users, Company, UsersTask } = require("../../models");
 
 // ============================  SALES  TO AGENTS ASSOCIATIONS ============================ //
 
@@ -19,5 +19,8 @@ Company.hasMany(Tasks,{
     }
 });
 Tasks.belongsTo(Company);
+
+Tasks.belongsToMany(Users, { through: 'UserTask' });
+Users.belongsToMany(Tasks, { through: 'UserTask' });
 
 module.exports = {Tasks,Users, Company }
