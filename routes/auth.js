@@ -64,6 +64,7 @@ routes.post("/Login", async (req, res) => {
             return res.status(200).json({
               message: "success",
               token: "BearerSplit" + token,
+              payload:payload
             });
           }
         );
