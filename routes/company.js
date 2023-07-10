@@ -70,7 +70,7 @@ routes.get("/company_data", async (req, res) => {
 
     res.status(200).send({ payload: promise, message: 'success' });
   } catch (error) {
-    res.status(500).send({ message: 'An error occurred', error });
+    res.status(500).send({ message: 'error', error });
   }
 });
 

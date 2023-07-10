@@ -12,39 +12,38 @@ const {
 
 routes.get("/getAllClients", async (req, res) => {
   const { id, offset } = req.headers;
-
-  const payload = await Clients.findAll({
-    where: { CompanyId: id },
-    offset: offset || 0,
-    limit: 10,
-  });
-  res.status(200).send({ payload: payload });
+  try {
+    const payload = await Clients.findAll({
+      where: { CompanyId: id },
+      offset: offset || 0,
+      limit: 10,
+    });
+    res.status(200).send({ payload: payload, message: "success" });
+  } catch (e) {
+    console.log(e);
+    res.status(200).send({message: "error" });
+  }
 });
 
 routes.post("/createClient", async (req, res) => {
   console.log(req.body);
   const { data, id } = req.body;
   try {
-    const payload = await Clients.create(
-      {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        country: data.country,
-        city: data.city,
-        source: data.source,
-        source_link: data.source_link,
-        comments: data.comments,
-        CompanyId: id,
-      },
-    );
-    res.status(200).send({ message: "success", payload: payload });
-  } catch (e) {
-    res.json({
-      status: "error",
-      message: "Something Went Wrong Please Try Again",
+    const payload = await Clients.create({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      country: data.country,
+      city: data.city,
+      source: data.source,
+      source_link: data.source_link,
+      comments: data.comments,
+      CompanyId: id,
     });
+    res.status(200).send({ message: "success", payload: payload }); 
+  } catch (e) {
+    res.status(200).send({message: "error" });
   }
 });
 
@@ -69,7 +68,7 @@ routes.post("/updateClient", async (req, res) => {
     );
     res.status(200).send({ message: "success", payload: payload });
   } catch (e) {
-    console.log(e)
+    console.log(e);
     res.json({
       status: "error",
       message: "Something Went Wrong Please Try Again",

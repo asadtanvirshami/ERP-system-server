@@ -103,11 +103,11 @@ routes.post("/signUp", async (req, res) => {
             CompanyId: id,
           });
           // mailFunc(customer.phone, otp);
-          res.status(200).send({ status: "success", payload:payload });
+          res.status(200).send({ message: "success", payload:payload });
         } catch (e) {
           res.json({
-            status: "error",
-            message: "Something Went Wrong Please Try Again",
+            message: "error",
+           error:e
           });
         }
       }
@@ -136,14 +136,14 @@ routes.post("/signUp", async (req, res) => {
       }
     } else {
       res.json({
-        status: "error",
-        message: "Something Went Wrong Please Try Again",
+        message: "error",
+        error: e,
       });
     }
   } catch (error) {
     res.json({
-      status: "error",
-      message: "Something Went Wrong Please Try Again",
+      message: "error",
+      error: e,
     });
   }
 });
