@@ -6,8 +6,10 @@ const { Tasks } = require("../models");
 const {
   Company,
   Users,
-  UserTask
 } = require("../functions/associations/tasksAssociations");
+const {
+  UserTasks
+} = require("../functions/associations/userTaskAssociations");
 
 routes.get("/getAllTasks", async (req, res) => {
   const { id, offset } = req.headers;
@@ -141,19 +143,44 @@ routes.post("/updateTask", async (req, res) => {
 });
 
 routes.post("/assignTask", async (req, res) => {
+  var promises = (req.body).map((rqBody)=>{
+    return rqBody.id!==""?ShopItems.update({
+      name: rqBody.name,
+      units: rqBody.units,
+      selling_price: rqBody.s_price,
+      cost_price: rqBody.c_price,
+      weight: rqBody.weight,
+      cartan: rqBody.cartan,
+      image:rqBody.image,
+      stock: rqBody.stock,
+      qty: rqBody.qty,
+      active:1,
+      ShopId: rqBody.ShopId,
+      ChildCategoryId: rqBody.ChildCategoryId, 
+      ItemId: rqBody.ItemId
+    },
+    {where:{id:rqBody.id}}):ShopItems.create({
+      name:rqBody.name,
+      units:rqBody.units,
+      selling_price:rqBody.s_price, 
+      cost_price:rqBody.c_price,
+      weight:rqBody.weight,
+      cartan:rqBody.cartan,
+      image:rqBody.image,
+      stock:rqBody.stock,
+      qty:rqBody.qty,
+      active:1,
+      ShopId:rqBody.ShopId,
+      ChildCategoryId:rqBody.ChildCategoryId, 
+      ItemId:rqBody.ItemId,
+    })
+  })
   try {
     console.log(req.body);
     const update = await Tasks.update(
       { asignees: req.body.asignees },
       { where: { id: req.body.taskId } }
     );
-    // Find the task by taskId
-    const task = await Tasks.findByPk(req.body.taskId);
-    if (!task) {
-      return res
-        .status(404)
-        .json({ message: "error", error: "Task not found" });
-    }
 
     // Find the employees by employeeIds
     const employees = await Users.findAll({ where: { id: req.body.data } });

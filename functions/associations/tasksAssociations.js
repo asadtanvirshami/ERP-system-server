@@ -19,8 +19,8 @@ Company.hasMany(Tasks, {
 });
 Tasks.belongsTo(Company);
 
-Tasks.belongsToMany(Users, { through: "UserTask" });
-Users.belongsToMany(Tasks, { through: "UserTask" });
+// Tasks.belongsToMany(Users, { through: "UserTask" });
+// Users.belongsToMany(Tasks, { through: "UserTask" });
 
 // Tasks.belongsToMany(Users, {through: {
 //   model: UserTask,
