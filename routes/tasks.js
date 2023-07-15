@@ -1,10 +1,8 @@
 const Sequelize = require("sequelize");
-const Op = Sequelize.Op;
 
 const routes = require("express").Router();
 const { Tasks } = require("../models");
 const {
-  Company,
   Users,
 } = require("../functions/associations/tasksAssociations");
 const { UserTasks } = require("../functions/associations/userTaskAssociations");
@@ -123,35 +121,36 @@ routes.post("/updateTask", async (req, res) => {
 });
 
 routes.post("/assignTask", async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const existsUserTasks = await UserTasks.findAll({
     where: { TaskId: req.body.taskId },
   });
-  
-  console.log(existsUserTasks, 'user');
-  
-  const usersToFilter = existsUserTasks.map(userTask => userTask.UserId);
-  
-  const filteredUsers = req.body.asignees.filter(userId => !usersToFilter.includes(userId.id));
-  
-  console.log(filteredUsers, 'filteredUsers');
 
-    const promises = filteredUsers.map((rqBody) => {
-      return UserTasks.create({
-        UserId: rqBody.id,
-        CompanyId: req.body.companyId,
-        TaskId: req.body.taskId,
-      })
-    })
-    
-    try {
-      
-      await Promise.all(promises);
-      const update = await Tasks.update(
+  console.log(existsUserTasks, "user");
+
+  const usersToFilter = existsUserTasks.map((userTask) => userTask.UserId);
+
+  const filteredUsers = req.body.asignees.filter(
+    (userId) => !usersToFilter.includes(userId.id)
+  );
+
+  console.log(filteredUsers, "filteredUsers");
+
+  const promises = filteredUsers.map((rqBody) => {
+    return UserTasks.create({
+      UserId: rqBody.id,
+      CompanyId: req.body.companyId,
+      TaskId: req.body.taskId,
+    });
+  });
+
+  try {
+    await Promise.all(promises);
+    const update = await Tasks.update(
       { asignees: req.body.asignees },
       { where: { id: req.body.taskId } }
     );
-    return res.status(200).send({ message: "success", payload: null });
+    return res.status(200).send({ message: "success", payload: update });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "error", error: e });
@@ -159,18 +158,30 @@ routes.post("/assignTask", async (req, res) => {
 });
 
 routes.delete("/deleteUserTask", async (req, res) => {
-  const { id } = req.headers;
+  const { id, taskid } = req.headers;
   console.log(req.headers);
   try {
-    const DeleteUserTask = await UserTasks.destroy({ where: { id: id } });
+    const Task = await Tasks.findOne({ where: { id: taskid } });
+    console.log(Task.asignees)
+    if (Task) {
+      const updatedAsignees = Task.asignees.filter((x) => x.id !== id);
+      await Tasks.update({ asignees: updatedAsignees},{ where: { id: taskid } });
+    }
+    const DeleteUserTask = await UserTasks.destroy({ where: { UserId: id } });
     if (DeleteUserTask) {
-      res.status(200).send({ message: "success", task: id, error: null });
+      res
+        .status(200)
+        .send({
+          message: "success",
+          payload: "successfully deleted",
+          error: null,
+        });
     } else {
-      res.status(404).send({ message: "error", task: null, error: "error" });
+      res.status(404).send({ message: "error", payload: null, error: "error" });
     }
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "error", task: null, error: e });
+    res.status(500).json({ message: "error", payload: null, error: e });
   }
 });
 
