@@ -7,9 +7,7 @@ const {
   Company,
   Users,
 } = require("../functions/associations/tasksAssociations");
-const {
-  UserTasks
-} = require("../functions/associations/userTaskAssociations");
+const { UserTasks } = require("../functions/associations/userTaskAssociations");
 
 routes.get("/getAllTasks", async (req, res) => {
   const { id, offset } = req.headers;
@@ -37,24 +35,6 @@ routes.get("/getAllTasks", async (req, res) => {
     res.status(500).send({ message: "error" });
   }
 });
-
-// const payload = await UserTasks.findAll({
-//   where: { CompanyId: id },
-//   offset: offset || 0,
-//   limit: 10,
-//   include: [
-//     {
-//       model: Users,
-//     },
-//     {
-//       model: Tasks,
-//       include: [{ model: Users }],
-//     },
-//   ],
-// });
-// Users;
-// res.status(200).send({ payload: payload });
-// });
 
 routes.post("/createTask", async (req, res) => {
   console.log(req.body);
@@ -143,60 +123,54 @@ routes.post("/updateTask", async (req, res) => {
 });
 
 routes.post("/assignTask", async (req, res) => {
-  var promises = (req.body).map((rqBody)=>{
-    return rqBody.id!==""?ShopItems.update({
-      name: rqBody.name,
-      units: rqBody.units,
-      selling_price: rqBody.s_price,
-      cost_price: rqBody.c_price,
-      weight: rqBody.weight,
-      cartan: rqBody.cartan,
-      image:rqBody.image,
-      stock: rqBody.stock,
-      qty: rqBody.qty,
-      active:1,
-      ShopId: rqBody.ShopId,
-      ChildCategoryId: rqBody.ChildCategoryId, 
-      ItemId: rqBody.ItemId
-    },
-    {where:{id:rqBody.id}}):ShopItems.create({
-      name:rqBody.name,
-      units:rqBody.units,
-      selling_price:rqBody.s_price, 
-      cost_price:rqBody.c_price,
-      weight:rqBody.weight,
-      cartan:rqBody.cartan,
-      image:rqBody.image,
-      stock:rqBody.stock,
-      qty:rqBody.qty,
-      active:1,
-      ShopId:rqBody.ShopId,
-      ChildCategoryId:rqBody.ChildCategoryId, 
-      ItemId:rqBody.ItemId,
+  console.log(req.body)
+  const existsUserTasks = await UserTasks.findAll({
+    where: { TaskId: req.body.taskId },
+  });
+  
+  console.log(existsUserTasks, 'user');
+  
+  const usersToFilter = existsUserTasks.map(userTask => userTask.UserId);
+  
+  const filteredUsers = req.body.asignees.filter(userId => !usersToFilter.includes(userId.id));
+  
+  console.log(filteredUsers, 'filteredUsers');
+
+    const promises = filteredUsers.map((rqBody) => {
+      return UserTasks.create({
+        UserId: rqBody.id,
+        CompanyId: req.body.companyId,
+        TaskId: req.body.taskId,
+      })
     })
-  })
-  try {
-    console.log(req.body);
-    const update = await Tasks.update(
+    
+    try {
+      
+      await Promise.all(promises);
+      const update = await Tasks.update(
       { asignees: req.body.asignees },
       { where: { id: req.body.taskId } }
     );
-
-    // Find the employees by employeeIds
-    const employees = await Users.findAll({ where: { id: req.body.data } });
-    if (employees.length !== req.body.data.length) {
-      return res
-        .status(404)
-        .json({ message: "error", error: "One or more employees not found" });
-    }
-
-    // // Add the employees to the task
-    await task.addUser(employees);
-
-    return res.status(200).send({ message: "success", payload: update });
+    return res.status(200).send({ message: "success", payload: null });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "error", error: e });
+  }
+});
+
+routes.delete("/deleteUserTask", async (req, res) => {
+  const { id } = req.headers;
+  console.log(req.headers);
+  try {
+    const DeleteUserTask = await UserTasks.destroy({ where: { id: id } });
+    if (DeleteUserTask) {
+      res.status(200).send({ message: "success", task: id, error: null });
+    } else {
+      res.status(404).send({ message: "error", task: null, error: "error" });
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "error", task: null, error: e });
   }
 });
 
@@ -206,15 +180,12 @@ routes.delete("/deleteTask", async (req, res) => {
   try {
     const task = await Tasks.findByPk(id);
     if (task) {
-      const employees = await Users.findAll({ where: { id: req.headers.asignees } });
-      const deleteUserTasks = await task.removeUser(employees);
-      if (deleteUserTasks) {
-        await Tasks.destroy({ where: { id: id } });
-      } else {
-        console.log("none");
-      }
+      await UserTasks.destroy({ where: { TaskId: id } });
+      await Tasks.destroy({ where: { id: id } });
+      res.status(200).send({ message: "success", task: id, error: null });
+    } else {
+      res.status(200).send({ message: "error", task: null, error: null });
     }
-    res.status(200).send({ message: "success", task: id, error: null });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "error", task: null, error: e });
