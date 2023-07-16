@@ -43,7 +43,7 @@ routes.post("/Login", async (req, res) => {
       where: { email: data.email, password: data.password },
     });
     const userCompany = await Company.findOne({
-      where: { UserId: userVerification.id },
+      where: { id: userVerification.CompanyId},
     });
     if (userVerification) {
       if (

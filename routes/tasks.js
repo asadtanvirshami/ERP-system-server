@@ -126,8 +126,6 @@ routes.post("/assignTask", async (req, res) => {
     where: { TaskId: req.body.taskId },
   });
 
-  console.log(existsUserTasks, "user");
-
   const usersToFilter = existsUserTasks.map((userTask) => userTask.UserId);
 
   const filteredUsers = req.body.asignees.filter(
@@ -162,7 +160,6 @@ routes.delete("/deleteUserTask", async (req, res) => {
   console.log(req.headers);
   try {
     const Task = await Tasks.findOne({ where: { id: taskid } });
-    console.log(Task.asignees)
     if (Task) {
       const updatedAsignees = Task.asignees.filter((x) => x.id !== id);
       await Tasks.update({ asignees: updatedAsignees},{ where: { id: taskid } });
