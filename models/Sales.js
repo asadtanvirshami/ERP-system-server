@@ -24,6 +24,13 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
+    source_link: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
     status: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -40,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     total_amount: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    total_amount_txt: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
