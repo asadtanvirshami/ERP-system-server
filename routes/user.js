@@ -7,14 +7,21 @@ const Op = Sequelize.Op;
 const { Users } = require("../models");
 
 routes.get("/getAllAgents", async (req, res) => {
-  const { id, offset } = req.headers;
+  const { id } = req.headers;
+  const page = parseInt(req.headers.page) || 0;
+  const limit = parseInt(req.headers.limit) || 5;
+  
+  const zeroBasedPage = Math.max(0, page - 1);
+  const offset = zeroBasedPage * limit;
+
   try {
-    const payload = await Users.findAll({
+    const totalItems = await Users.count({ where: { type: "agent", CompanyId: id } });
+    const agents = await Users.findAll({ 
       where: { type: "agent", CompanyId: id },
-      offset: offset || 0,
-      limit: 10,
+      offset: offset,
+      limit: limit,
     });
-    res.status(200).send({ payload: payload, message:'success' });
+    res.status(200).send({ payload: agents,totalItems:totalItems,  message:'success' });
   } catch (e) {
     res.status(500).send({  message:'error'});
   }

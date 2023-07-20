@@ -12,8 +12,6 @@ routes.get("/getAllTasks", async (req, res) => {
   try {
     const users = await Users.findAll({
       where: { CompanyId: id, type: "agent" },
-      offset: offset || 0,
-      limit: 10,
     });
     const payload = await Tasks.findAll({
       where: { CompanyId: id },
