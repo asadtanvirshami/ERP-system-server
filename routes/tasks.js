@@ -2,30 +2,35 @@ const Sequelize = require("sequelize");
 
 const routes = require("express").Router();
 const { Tasks } = require("../models");
-const {
-  Users,
-} = require("../functions/associations/tasksAssociations");
+const { Users } = require("../functions/associations/tasksAssociations");
 const { UserTasks } = require("../functions/associations/userTaskAssociations");
 
 routes.get("/getAllTasks", async (req, res) => {
-  const { id, offset } = req.headers;
+  const { id } = req.headers;
+  const page = parseInt(req.headers.page) || 0;
+  const limit = parseInt(req.headers.limit) || 5;
+
+  const zeroBasedPage = Math.max(0, page - 1);
+  const offset = zeroBasedPage * limit;
+  
   try {
-    const users = await Users.findAll({
-      where: { CompanyId: id, type: "agent" },
+    const totalItems = await Tasks.count({
+      where: {CompanyId: id },
     });
     const payload = await Tasks.findAll({
       where: { CompanyId: id },
-      offset: offset || 0,
-      limit: 10,
+      offset: offset,
+      limit: limit || 10,
       include: [
         {
           model: Users,
         },
       ],
     });
+    
     res
       .status(200)
-      .send({ payload: payload, users: users, message: "success" });
+      .send({ payload: payload, totalItems: totalItems, message: "success" });
   } catch (e) {
     console.log("error", e);
     res.status(500).send({ message: "error" });
@@ -160,17 +165,18 @@ routes.delete("/deleteUserTask", async (req, res) => {
     const Task = await Tasks.findOne({ where: { id: taskid } });
     if (Task) {
       const updatedAsignees = Task.asignees.filter((x) => x.id !== id);
-      await Tasks.update({ asignees: updatedAsignees},{ where: { id: taskid } });
+      await Tasks.update(
+        { asignees: updatedAsignees },
+        { where: { id: taskid } }
+      );
     }
     const DeleteUserTask = await UserTasks.destroy({ where: { UserId: id } });
     if (DeleteUserTask) {
-      res
-        .status(200)
-        .send({
-          message: "success",
-          payload: "successfully deleted",
-          error: null,
-        });
+      res.status(200).send({
+        message: "success",
+        payload: "successfully deleted",
+        error: null,
+      });
     } else {
       res.status(404).send({ message: "error", payload: null, error: "error" });
     }
