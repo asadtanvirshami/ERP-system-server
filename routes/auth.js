@@ -35,51 +35,54 @@ async function mailFunc(x, otp) {
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }
 //Login API
-routes.post("/Login", async (req, res) => {
+routes.post("/Login", async function (req, res) {
+  // using same variable name as used in frontend
+  // destructuring
   const { data } = req.body;
 
-  if (data.email && data.password) {
-    const userVerification = await Users.findOne({
-      where: { email: data.email, password: data.password },
-    });
-    if (userVerification) {
-      const userCompany = await Company.findOne({
+try{  
+  const userVerification = await Users.findOne({  where: { email: data.email, password: data.password } });
+  if (!userVerification) {
+    res.send({ message: "invalid"});
+  }   else {
+        const userCompany = await Company.findOne({
         where: { id: userVerification.CompanyId},
       });
-      if (
+     if (
         userVerification.email == data.email &&
-        userVerification.password == data.password
+        userVerification.password == data.password && userVerification
       ) {
         const payload = {
-          type: userVerification.type,
-          email: userVerification.email,
+          type:`${userVerification.type}`,
+          email: `${userVerification.email}`,
           name: `${userVerification.name}`,
           loginId: `${userVerification.id}`,
           designation: `${userVerification.designation}`,
           companyId: `${userVerification.CompanyId}`,
           companyName: `${userCompany.name}`,
         };
-        jwt.sign(
-          payload,
-          "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
-          { expiresIn: "8760h" },
-          (err, token) => {
-            if (err) return res.json({ message: err });
-            return res.status(200).json({
-              message: "success",
-              token: "BearerSplit" + token,
-              payload:payload
-            });
-          }
-        );
-      } else {
-        return res.json({ message: "invalid" });
+       
+       jwt.sign(
+      payload,
+      "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
+      { expiresIn: "8760h" },
+      (err, token) => {
+        if (err) {
+          console.error('JWT sign error:', err);
+          return res.status(500).json({ message: 'Error signing token' });
+        }
+        return res.status(200).send({
+          message: "success",
+          token: "BearerSplit" + token,
+          payload: payload
+        });
       }
-    } else {
-      return res.json({ message: "invalid" });
-    }
-  } else {
-    return res.json({ message: "Invalid" });
+    );
+      }
+  }
+  }catch(e){
+    console.log(e)
+    res.json({message:"Error occured"})
   }
 });
 
