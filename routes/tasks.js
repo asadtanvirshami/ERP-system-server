@@ -5,7 +5,7 @@ const { Tasks } = require("../models");
 const { Users } = require("../functions/associations/tasksAssociations");
 const { UserTasks } = require("../functions/associations/userTaskAssociations");
 
-routes.get("/getAllTasks", async (req, res) => {
+routes.get("/api/getAllTasks", async (req, res) => {
   const { id } = req.headers;
   const page = parseInt(req.headers.page) || 0;
   const limit = parseInt(req.headers.limit) || 5;
@@ -37,7 +37,7 @@ routes.get("/getAllTasks", async (req, res) => {
   }
 });
 
-routes.post("/createTask", async (req, res) => {
+routes.post("/api/createTask", async (req, res) => {
   console.log(req.body);
   const task_code = Math.floor(100 + Math.random() * 9000);
   const {
@@ -79,7 +79,7 @@ routes.post("/createTask", async (req, res) => {
   }
 });
 
-routes.post("/updateTask", async (req, res) => {
+routes.post("/api/updateTask", async (req, res) => {
   console.log(req.body);
   const task_code = Math.floor(100 + Math.random() * 9000);
   const {
@@ -123,7 +123,7 @@ routes.post("/updateTask", async (req, res) => {
   }
 });
 
-routes.post("/assignTask", async (req, res) => {
+routes.post("/api/assignTask", async (req, res) => {
   console.log(req.body);
   const existsUserTasks = await UserTasks.findAll({
     where: { TaskId: req.body.taskId },
@@ -158,7 +158,7 @@ routes.post("/assignTask", async (req, res) => {
   }
 });
 
-routes.delete("/deleteUserTask", async (req, res) => {
+routes.delete("/api/deleteUserTask", async (req, res) => {
   const { id, taskid } = req.headers;
   console.log(req.headers);
   try {
@@ -186,7 +186,7 @@ routes.delete("/deleteUserTask", async (req, res) => {
   }
 });
 
-routes.delete("/deleteTask", async (req, res) => {
+routes.delete("/api/deleteTask", async (req, res) => {
   const { id } = req.headers;
   console.log(req.headers);
   try {

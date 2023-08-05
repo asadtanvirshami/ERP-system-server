@@ -10,7 +10,7 @@ const {
   Clients,
 } = require("../functions/associations/clientAssociations");
 
-routes.get("/getAllClients", async (req, res) => {
+routes.get("/api/getAllClients", async (req, res) => {
   const { id, offset } = req.headers;
   try {
     const payload = await Clients.findAll({
@@ -25,7 +25,7 @@ routes.get("/getAllClients", async (req, res) => {
   }
 });
 
-routes.post("/createClient", async (req, res) => {
+routes.post("/api/createClient", async (req, res) => {
   console.log(req.body);
   const { data, id } = req.body;
   try {
@@ -47,7 +47,7 @@ routes.post("/createClient", async (req, res) => {
   }
 });
 
-routes.post("/updateClient", async (req, res) => {
+routes.post("/api/updateClient", async (req, res) => {
   console.log(req.body);
   const { data, id } = req.body;
   try {
@@ -76,7 +76,7 @@ routes.post("/updateClient", async (req, res) => {
   }
 });
 
-routes.delete("/deleteClient", async (req, res) => {
+routes.delete("/api/deleteClient", async (req, res) => {
   const id = req.headers.id;
   try {
     const payload = await Clients.destroy({

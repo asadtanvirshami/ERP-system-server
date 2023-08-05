@@ -12,6 +12,7 @@ const companyRoute = require('./routes/company')
 const invoicesRoute = require('./routes/invoices')
 const optionsRoute = require('./routes/options')
 const salesRoute = require('./routes/sales')
+const projectRoute = require('./routes/projects')
 const userRoute = require('./routes/user')
 const taskRoute = require('./routes/tasks')
 
@@ -29,6 +30,7 @@ app.get("/isLoggedInVerification", verify, (req, res) => { res.json({isLoggedIn:
 app.use("/auth", authRoute);
 app.use("/client", clientRoute);
 app.use("/sales", salesRoute);
+app.use("/projects", projectRoute);
 app.use("/user", userRoute);
 app.use("/tasks", taskRoute);
 app.use("/company", companyRoute);

@@ -35,7 +35,7 @@ async function mailFunc(x, otp) {
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }
 //Login API
-routes.post("/Login", async function (req, res) {
+routes.post("/api/Login", async function (req, res) {
   // using same variable name as used in frontend
   // destructuring
   const { data } = req.body;
@@ -87,7 +87,7 @@ try{
 });
 
 //SignUP API
-routes.post("/signUp", async (req, res) => {
+routes.post("/api/signUp", async (req, res) => {
   // const otp = Math.floor(1000 + Math.random() * 9000);
   const { type, designation, data, id } = req.body;
   try {

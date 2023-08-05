@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 
-const { Sales, Invoices,Users } = require("../../models/");
+const { Sales, Invoices,Users } = require("../../models");
 
 // ============================  SALES  TO AGENTS ASSOCIATIONS ============================ //
 

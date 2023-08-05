@@ -40,7 +40,7 @@ async function mailFunc(x, otp) {
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }
 
-routes.get("/company_data", async (req, res) => {
+routes.get("/api/company_data", async (req, res) => {
   const { id, offset = 0 } = req.headers;
 
   try {
@@ -76,7 +76,7 @@ routes.get("/company_data", async (req, res) => {
 
 
 //SignUP API
-routes.post("/companyReg", async (req, res) => {
+routes.post("/api/companyReg", async (req, res) => {
   const { id, data } = req.body;
   console.log(data, id);
   try {

@@ -6,7 +6,7 @@ const Op = Sequelize.Op;
 
 const { Users } = require("../models");
 
-routes.get("/getAllAgents", async (req, res) => {
+routes.get("/api/getAllAgents", async (req, res) => {
   const { id } = req.headers;
   const page = parseInt(req.headers.page) || 0;
   const limit = parseInt(req.headers.limit) || 5;
@@ -27,7 +27,7 @@ routes.get("/getAllAgents", async (req, res) => {
   }
 });
 
-routes.post("/updateAgent", async (req, res) => {
+routes.post("/api/updateAgent", async (req, res) => {
   console.log(req.body);
   const { data, id } = req.body;
   try {
@@ -54,7 +54,7 @@ routes.post("/updateAgent", async (req, res) => {
   }
 });
 
-routes.delete("/deleteAgent", async (req, res) => {
+routes.delete("/api/deleteAgent", async (req, res) => {
   const id = req.headers.id;
   try {
     const payload = await Users.destroy({

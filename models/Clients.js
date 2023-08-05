@@ -18,35 +18,35 @@ module.exports = (sequelize, DataTypes) => {
         },
         address:{
             type:DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             validate:{
                 notEmpty: true
             }
         },
         city:{
             type:DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             validate:{
                 notEmpty: true
             }
         },
         country:{
             type:DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             validate:{
                 notEmpty: true
             }
         },
         email:{
             type:DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             validate:{
                 notEmpty: true
             }
         },
         phone:{
             type:DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             validate:{
                 notEmpty: true
             }

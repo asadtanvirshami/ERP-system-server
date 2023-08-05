@@ -6,7 +6,7 @@ const Op = Sequelize.Op;
 const routes = require("express").Router();
 const { Options } = require("../models");
 
-routes.post("/setoptions", async (req, res) => {
+routes.post("/api/setoptions", async (req, res) => {
     console.log(req.body)
     try {
     await Types.create({
@@ -19,7 +19,7 @@ routes.post("/setoptions", async (req, res) => {
     }
   });
 
-routes.post("/updateoptions", async (req, res) => {
+routes.post("/api/updateoptions", async (req, res) => {
     const type = req.body.type
     try {   
       if(type=='sources'){
