@@ -11,14 +11,24 @@ const {
 } = require("../functions/associations/clientAssociations");
 
 routes.get("/api/getAllClients", async (req, res) => {
-  const { id, offset } = req.headers;
+  const { id } = req.headers;
+
+  const page = parseInt(req.headers.page) || 0;
+  const limit = parseInt(req.headers.limit) || 5;
+
+  const zeroBasedPage = Math.max(0, page - 1);
+  const offset = zeroBasedPage * limit;
+
   try {
+    const totalItems = await Clients.count({
+      where: {CompanyId: id },
+    });
     const payload = await Clients.findAll({
       where: { CompanyId: id },
       offset: offset || 0,
       limit: 10,
     });
-    res.status(200).send({ payload: payload, message: "success" });
+    res.status(200).send({ payload: payload,totalItems:totalItems, message: "success" });
   } catch (e) {
     console.log(e);
     res.status(200).send({message: "error" });
