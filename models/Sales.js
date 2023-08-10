@@ -38,6 +38,13 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
+      start_month: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
       start_time: {
         type: DataTypes.STRING,
         allowNull: false,
