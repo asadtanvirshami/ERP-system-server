@@ -139,7 +139,7 @@ routes.post("/api/updateTask", async (req, res) => {
 
   try {
     const taskPayload = {
-      id:id,
+      id: id,
       title: title,
       description: description,
       priority: priority,
@@ -152,12 +152,14 @@ routes.post("/api/updateTask", async (req, res) => {
       code: task_code,
       status: "pending",
       active: true,
-      asignees:asignees,
+      asignees: asignees,
       UserId: userId,
       CompanyId: companyId,
     };
 
-    const createdTask = await Tasks.update(taskPayload,{ where: { id: id } });
+    console.log('asignees', asignees);
+
+    const createdTask = await Tasks.update(taskPayload, { where: { id: id } });
 
     const existsUserTasks = await UserTasks.findAll({
       where: { TaskId: id },
@@ -165,36 +167,46 @@ routes.post("/api/updateTask", async (req, res) => {
 
     const usersToFilter = existsUserTasks.map((userTask) => userTask.UserId);
 
-    const filteredUsers = asignees.filter(
-      (userId) => !usersToFilter.includes(userId.id)
+    // Find new asignees (those not in existsUserTasks)
+    const newAsignees = isCheck.filter(
+      (userId) => !usersToFilter.includes(userId)
     );
 
-    const assignedUser =  filteredUsers.map((rqBody) => {
-      return {
-        id: rqBody.id,
-        email: rqBody.email,
-      };
-    });
+    // Find removed asignees (those in existsUserTasks but not in req.body.asignees)
+    const removedAsignees = usersToFilter.filter(
+      (userId) => !isCheck.includes(userId)
+    );
 
-    const promises = filteredUsers.map((rqBody) => {
+    // Create new UserTasks records for new asignees
+    const newAsigneesPromises = await newAsignees.map((userId) => {
       return UserTasks.create({
-        UserId: rqBody.id,
+        UserId: userId,
         CompanyId: companyId,
         TaskId: id,
       });
     });
 
-    await Promise.all(promises);
+    // Remove UserTasks records for removed asignees
+    const removedAsigneesPromises = await removedAsignees.map((userId) => {
+      return UserTasks.destroy({
+        where: {
+          TaskId: id,
+          UserId: userId,
+        },
+      });
+    });
+
+    await Promise.all([...newAsigneesPromises, ...removedAsigneesPromises]);
 
     const update = await Tasks.update(
-      { asignees: assignedUser },
-      { where: { id:id } }
+      { asignees: asignees },
+      { where: { id: id } }
     );
 
     return res.status(200).send({
       message: "success",
       taskPayload: createdTask,
-      assignedUsers: filteredUsers,
+      assignedUsers: asignees,
       updatePayload: update,
     });
   } catch (e) {
@@ -202,6 +214,7 @@ routes.post("/api/updateTask", async (req, res) => {
     return res.status(500).json({ message: "error", error: e });
   }
 });
+
 
 routes.post("/api/assignTask", async (req, res) => {
   console.log(req.body);
