@@ -6,12 +6,25 @@ const Op = Sequelize.Op;
 const routes = require("express").Router();
 const { Options } = require("../models");
 
-routes.post("/api/setoptions", async (req, res) => {
+routes.post("/api/createOptions", async (req, res) => {
     console.log(req.body)
     try {
-    await Types.create({
-    cities:`${[req.body.name]}`
-    },{where:{ id: `${id}` }})
+    await Options.create({
+    services:req.body
+    })
+      res.status.send(200)
+    } catch (error) {
+      console.log(); 
+      res.send(error);
+    }
+  });
+
+  routes.post("/api/updateOptions", async (req, res) => {
+    console.log(req.body)
+    try {
+    await Options.update({
+    status:req.body
+    },{where:{ id: 'cb9139c4-b743-4af1-b434-36b869257506' }})
       res.status.send(200)
     } catch (error) {
       console.log(); 
@@ -44,9 +57,9 @@ routes.post("/api/updateoptions", async (req, res) => {
     }
   });
   
-routes.get("/getoptions", async (req, res) => {
+routes.get("/api/getOptions", async (req, res) => {
     try {
-     const Res = await Types.findAll()
+     const Res = await Options.findAll()
       res.send(Res).status(200)
     } catch (error) {
       console.log(); 

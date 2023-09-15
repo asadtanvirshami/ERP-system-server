@@ -50,9 +50,12 @@ routes.post("/api/createTask", async (req, res) => {
     bonus,
     userId,
     companyId,
+    asignees,
+    isCheck
   } = req.body;
+
   try {
-    const payload = await Tasks.create({
+    const taskPayload = {
       title: title,
       description: description,
       priority: priority,
@@ -65,17 +68,54 @@ routes.post("/api/createTask", async (req, res) => {
       code: task_code,
       status: "pending",
       active: true,
-      asignees: [],
+      asignees:asignees,
       UserId: userId,
       CompanyId: companyId,
+    };
+
+    const createdTask = await Tasks.create(taskPayload);
+
+    const existsUserTasks = await UserTasks.findAll({
+      where: { TaskId: createdTask.id },
     });
-    res.status(200).send({
+
+    const usersToFilter = existsUserTasks.map((userTask) => userTask.UserId);
+
+    const filteredUsers = asignees.filter(
+      (userId) => !usersToFilter.includes(userId.id)
+    );
+
+    const assignedUser =  filteredUsers.map((rqBody) => {
+      return {
+        id: rqBody.id,
+        email: rqBody.email,
+      };
+    });
+
+    const promises = filteredUsers.map((rqBody) => {
+      return UserTasks.create({
+        UserId: rqBody.id,
+        CompanyId: companyId,
+        TaskId: createdTask.id,
+      });
+    });
+
+    await Promise.all(promises);
+
+    const update = await Tasks.update(
+      { asignees: assignedUser },
+      { where: { id: createdTask.id } }
+    );
+
+    return res.status(200).send({
       message: "success",
-      payload: payload,
+      taskPayload: createdTask,
+      assignedUsers: filteredUsers,
+      updatePayload: update,
     });
   } catch (e) {
-    res.status(304).send({ status: "error", message: "Error Occured" });
-    console.log("Error Occured", e);
+    console.error(e);
+    return res.status(500).json({ message: "error", error: e });
   }
 });
 
@@ -83,6 +123,7 @@ routes.post("/api/updateTask", async (req, res) => {
   console.log(req.body);
   const task_code = Math.floor(100 + Math.random() * 9000);
   const {
+    id,
     title,
     description,
     priority,
@@ -92,36 +133,88 @@ routes.post("/api/updateTask", async (req, res) => {
     bonus,
     userId,
     companyId,
+    asignees,
+    isCheck
   } = req.body.data;
+
   try {
-    const payload = await Tasks.update(
-      {
-        title: title,
-        description: description,
-        priority: priority,
-        deadline: deadline,
-        start_date: startDate,
-        start_time: startTime,
-        end_date: "pending",
-        end_time: "pending",
-        bonus: bonus,
-        code: task_code,
-        status: "pending",
-        active: true,
-        // asignees:
+    const taskPayload = {
+      id: id,
+      title: title,
+      description: description,
+      priority: priority,
+      deadline: deadline,
+      start_date: startDate,
+      start_time: startTime,
+      end_date: "pending",
+      end_time: "pending",
+      bonus: bonus,
+      code: task_code,
+      status: "pending",
+      active: true,
+      asignees: asignees,
+      UserId: userId,
+      CompanyId: companyId,
+    };
+
+    console.log('asignees', asignees);
+
+    const createdTask = await Tasks.update(taskPayload, { where: { id: id } });
+
+    const existsUserTasks = await UserTasks.findAll({
+      where: { TaskId: id },
+    });
+
+    const usersToFilter = existsUserTasks.map((userTask) => userTask.UserId);
+
+    // Find new asignees (those not in existsUserTasks)
+    const newAsignees = isCheck.filter(
+      (userId) => !usersToFilter.includes(userId)
+    );
+
+    // Find removed asignees (those in existsUserTasks but not in req.body.asignees)
+    const removedAsignees = usersToFilter.filter(
+      (userId) => !isCheck.includes(userId)
+    );
+
+    // Create new UserTasks records for new asignees
+    const newAsigneesPromises = await newAsignees.map((userId) => {
+      return UserTasks.create({
         UserId: userId,
         CompanyId: companyId,
-      },
-      { where: { id: req.body.taskId } }
+        TaskId: id,
+      });
+    });
+
+    // Remove UserTasks records for removed asignees
+    const removedAsigneesPromises = await removedAsignees.map((userId) => {
+      return UserTasks.destroy({
+        where: {
+          TaskId: id,
+          UserId: userId,
+        },
+      });
+    });
+
+    await Promise.all([...newAsigneesPromises, ...removedAsigneesPromises]);
+
+    const update = await Tasks.update(
+      { asignees: asignees },
+      { where: { id: id } }
     );
-    res.status(200).send({
+
+    return res.status(200).send({
       message: "success",
-      payload: payload,
+      taskPayload: createdTask,
+      assignedUsers: asignees,
+      updatePayload: update,
     });
   } catch (e) {
-    res.status(304).send({ message: "error", e: e });
+    console.error(e);
+    return res.status(500).json({ message: "error", error: e });
   }
 });
+
 
 routes.post("/api/assignTask", async (req, res) => {
   console.log(req.body);
@@ -205,3 +298,128 @@ routes.delete("/api/deleteTask", async (req, res) => {
 });
 
 module.exports = routes;
+
+
+// routes.post("/api/createTask", async (req, res) => {
+//   console.log(req.body);
+//   const task_code = Math.floor(100 + Math.random() * 9000);
+//   const {
+//     title,
+//     description,
+//     priority,
+//     deadline,
+//     startTime,
+//     startDate,
+//     bonus,
+//     userId,
+//     companyId,
+//   } = req.body;
+//   try {
+//     const payload = await Tasks.create({
+//       title: title,
+//       description: description,
+//       priority: priority,
+//       deadline: deadline,
+//       start_date: startDate,
+//       start_time: startTime,
+//       end_date: "pending",
+//       end_time: "pending",
+//       bonus: bonus,
+//       code: task_code,
+//       status: "pending",
+//       active: true,
+//       asignees: [],
+//       UserId: userId,
+//       CompanyId: companyId,
+//     });
+//     res.status(200).send({
+//       message: "success",
+//       payload: payload,
+//     });
+//   } catch (e) {
+//     res.status(304).send({ status: "error", message: "Error Occured" });
+//     console.log("Error Occured", e);
+//   }
+// });
+
+
+
+// routes.post("/api/assignTask", async (req, res) => {
+//   console.log(req.body);
+//   const existsUserTasks = await UserTasks.findAll({
+//     where: { TaskId: req.body.taskId },
+//   });
+
+//   const usersToFilter = existsUserTasks.map((userTask) => userTask.UserId);
+
+//   const filteredUsers = req.body.asignees.filter(
+//     (userId) => !usersToFilter.includes(userId.id)
+//   );
+
+//   console.log(filteredUsers, "filteredUsers");
+
+//   const promises = filteredUsers.map((rqBody) => {
+//     return UserTasks.create({
+//       UserId: rqBody.id,
+//       CompanyId: req.body.companyId,
+//       TaskId: req.body.taskId,
+//     });
+//   });
+
+//   try {
+//     await Promise.all(promises);
+//     const update = await Tasks.update(
+//       { asignees: req.body.asignees },
+//       { where: { id: req.body.taskId } }
+//     );
+//     return res.status(200).send({ message: "success", payload: update });
+//   } catch (e) {
+//     console.error(e);
+//     return res.status(500).json({ message: "error", error: e });
+//   }
+// });
+
+
+// routes.post("/api/updateTask", async (req, res) => {
+//   console.log(req.body);
+//   const task_code = Math.floor(100 + Math.random() * 9000);
+//   const {
+//     title,
+//     description,
+//     priority,
+//     deadline,
+//     startTime,
+//     startDate,
+//     bonus,
+//     userId,
+//     companyId,
+//   } = req.body.data;
+//   try {
+//     const payload = await Tasks.update(
+//       {
+//         title: title,
+//         description: description,
+//         priority: priority,
+//         deadline: deadline,
+//         start_date: startDate,
+//         start_time: startTime,
+//         end_date: "pending",
+//         end_time: "pending",
+//         bonus: bonus,
+//         code: task_code,
+//         status: "pending",
+//         active: true,
+//         // asignees:
+//         UserId: userId,
+//         CompanyId: companyId,
+//       },
+//       { where: { id: req.body.taskId } }
+//     );
+//     res.status(200).send({
+//       message: "success",
+//       payload: payload,
+//     });
+//   } catch (e) {
+//     res.status(304).send({ message: "error", e: e });
+//   }
+// });
