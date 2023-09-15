@@ -13,23 +13,15 @@ const Options = sequelize.define("Options", {
             type:DataTypes.JSON,
             allowNull: true,
         },
-        resources:{
-            type:DataTypes.JSON,
-            allowNull: true, 
-        },
-        countries:{
+        status:{
             type:DataTypes.JSON,
             allowNull: true,  
         },
-        job_type:{
+        designation:{
             type:DataTypes.JSON,
             allowNull: true,  
         },
-        job_status:{
-            type:DataTypes.JSON,
-            allowNull: true,  
-        },
-        job_roles:{
+        services:{
             type:DataTypes.JSON,
             allowNull: true,  
         },
