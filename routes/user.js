@@ -6,10 +6,10 @@ const Op = Sequelize.Op;
 
 const { Users } = require("../models");
 
-routes.get("/api/getAllAgents", async (req, res) => {
-  const { id } = req.headers;
-  const page = parseInt(req.headers.page) || 0;
-  const limit = parseInt(req.headers.limit) || 5;
+routes.get("/api/getAgents", async (req, res) => {
+  const id = req.query.id;
+  const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+  const limit = parseInt(req.query.limit) || 10; // Default to 10 if not provided
   
   const zeroBasedPage = Math.max(0, page - 1);
   const offset = zeroBasedPage * limit;
@@ -21,9 +21,9 @@ routes.get("/api/getAllAgents", async (req, res) => {
       offset: offset,
       limit: limit,
     });
-    res.status(200).send({ payload: agents,totalItems:totalItems,  message:'success' });
+    res.status(200).send({ payload: agents, totalItems: totalItems, message: 'success' });
   } catch (e) {
-    res.status(500).send({  message:'error'});
+    res.status(500).send({ message: 'error' });
   }
 });
 

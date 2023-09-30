@@ -3,7 +3,8 @@ const Sequelize = require('sequelize');
 const nodemailer = require("nodemailer");
 const Op = Sequelize.Op;
 
-const {Sales,Invoices, Users} = require('../functions/associations/salesAssociations')
+const {Sales,Invoices, Users} = require('../functions/associations/salesAssociations');
+const Clients = require('../models/Clients');
 
 routes.get("/api/getAllSales", async (req, res) => {
     const { id } = req.headers;
@@ -49,38 +50,48 @@ routes.get("/api/getAllSales", async (req, res) => {
 
   routes.post("/api/createSale", async (req, res) => {
     console.log(req.body);
-    const task_code = Math.floor(100 + Math.random() * 9000);
     const {
       type,
       description,
       deadline,
       created_date,
       created_time,
+      created_month,
       userId,
       source,
       source_link,
-      amount_paid,
-      amount_left,
+      source_username,
       total_amount,
       t_amount_txt,
       companyId,
+      status,
+      service,
     } = req.body;
     try {
       const payload = await Sales.create({
-        type: type,
         source:source,
         source_link:source_link,
         description: description,
         deadline: deadline,
-        amount_paid:amount_paid,
-        amount_left:amount_left,
         total_amount:total_amount,
         total_amount_txt:t_amount_txt,
-        created_date: created_date,
-        created_time: created_time,
+        source_username:source_username,
+        status:status,
+        created_date:created_date,
+        created_month:created_month,
+        created_time:created_time,
+        service:service,
         UserId: userId,
         CompanyId: companyId,
       });
+      // const createInvoice = await Invoices.create({
+      //   SaleId: payload.id,
+      //   UserId: payload.UserId,
+      //   CompanyId: payload.CompanyId,
+      //   code:payload.code,
+      //   time:payload.created_time,
+      //   date:payload.created_date
+      // });
       res.status(200).send({
         message: "success",
         payload: payload,

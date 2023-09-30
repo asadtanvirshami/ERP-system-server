@@ -11,4 +11,11 @@ Clients.hasMany(Sales,{
 });
 Sales.belongsTo(Clients);
 
+Sales.hasMany(Clients,{
+    foriegnKey:{
+        type: DataTypes.INTEGER
+    }
+});
+Clients.belongsTo(Sales);
+
 module.exports = {Sales,Clients}

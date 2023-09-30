@@ -9,82 +9,37 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
-    service: {
+    code: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
-    description: {
+    tax: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
-    source: {
+    due_amount: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      allowNull: true,
     },
-    source_link: {
+    due_date: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      allowNull: true,
+    },
+    date: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    time: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    date: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     status: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    start_time: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    created_time: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    created_date: {
-      type: DataTypes.STRING,
       allowNull: true,
-    },
-    total_amount: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    total_amount_txt: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    amount_paid: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    amount_left: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    terms: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    due: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
     },
   });
   return Invoices;

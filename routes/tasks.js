@@ -5,10 +5,10 @@ const { Tasks } = require("../models");
 const { Users } = require("../functions/associations/tasksAssociations");
 const { UserTasks } = require("../functions/associations/userTaskAssociations");
 
-routes.get("/api/getAllTasks", async (req, res) => {
-  const { id } = req.headers;
-  const page = parseInt(req.headers.page) || 0;
-  const limit = parseInt(req.headers.limit) || 5;
+routes.get("/api/getTasks", async (req, res) => {
+  const id  = req.query.id;
+  const page = parseInt(req.query.page) || 0;
+  const limit = parseInt(req.query.limit) || 5;
 
   const zeroBasedPage = Math.max(0, page - 1);
   const offset = zeroBasedPage * limit;

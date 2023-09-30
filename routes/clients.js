@@ -9,6 +9,7 @@ const {
   Sales,
   Clients,
 } = require("../functions/associations/clientAssociations");
+const Invoices = require("../models/Invoices");
 
 routes.get("/api/getAllClients", async (req, res) => {
   const { id } = req.headers;
@@ -50,6 +51,7 @@ routes.post("/api/createClient", async (req, res) => {
       source_link: data.source_link,
       comments: data.comments,
       CompanyId: id,
+      SaleId:data.saleId
     });
     res.status(200).send({ message: "success", payload: payload }); 
   } catch (e) {

@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       service: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.JSON,
+        allowNull: true,
       },
       description: {
         type: DataTypes.STRING,
@@ -31,21 +31,15 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
+      code: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      pay_method: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       status: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
-      },
-      start_month: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
-      },
-      start_time: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -59,24 +53,30 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
+      created_month: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          notEmpty: true,
+        },
+      },
       created_date: {
         type: DataTypes.STRING,
         allowNull: true,
+        validate: {
+          notEmpty: true,
+        },
       },
       total_amount: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       total_amount_txt: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
       },
-      amount_paid: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      amount_left: {
-        type: DataTypes.INTEGER,
+      source_username: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
     });

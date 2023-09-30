@@ -48,37 +48,32 @@ try{
         const userCompany = await Company.findOne({
         where: { id: userVerification.CompanyId},
       });
-     if (
-        userVerification.email == data.email &&
-        userVerification.password == data.password && userVerification
-      ) {
-        const payload = {
-          type:`${userVerification.type}`,
-          email: `${userVerification.email}`,
-          name: `${userVerification.name}`,
-          loginId: `${userVerification.id}`,
-          designation: `${userVerification.designation}`,
-          companyId: `${userVerification.CompanyId}`,
-          companyName: `${userCompany.name}`,
-        };
-       
-       jwt.sign(
-      payload,
-      "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
-      { expiresIn: "8760h" },
-      (err, token) => {
-        if (err) {
-          console.error('JWT sign error:', err);
-          return res.status(500).json({ message: 'Error signing token' });
-        }
-        return res.status(200).send({
-          message: "success",
-          token: "BearerSplit" + token,
-          payload: payload
-        });
+      const payload = {
+        type:`${userVerification.type}`,
+        email: `${userVerification.email}`,
+        name: `${userVerification.name}`,
+        loginId: `${userVerification.id}`,
+        designation: `${userVerification.designation}`,
+        companyId: `${userVerification.CompanyId}`,
+        companyName: `${userCompany.name}`,
+      };
+     
+     jwt.sign(
+    payload,
+    "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
+    { expiresIn: "8760h" },
+    (err, token) => {
+      if (err) {
+        console.error('JWT sign error:', err);
+        return res.status(500).json({ message: 'Error signing token' });
       }
-    );
-      }
+      return res.status(200).send({
+        message: "success",
+        token: "BearerSplit" + token,
+        payload: payload
+      });
+    }
+  );
   }
   }catch(e){
     console.log(e)
