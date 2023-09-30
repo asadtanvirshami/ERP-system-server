@@ -1,10 +1,7 @@
-const jwt = require('jsonwebtoken');
 const Sequelize = require('sequelize');
-const nodemailer = require("nodemailer");
-const Op = Sequelize.Op;
 
 const routes = require("express").Router();
-const { Options } = require("../models");
+const {Options, Company} = require("../functions/associations/optionsAssociations")
 
 routes.post("/api/createOptions", async (req, res) => {
     console.log(req.body)

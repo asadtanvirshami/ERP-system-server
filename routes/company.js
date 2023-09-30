@@ -11,6 +11,7 @@ const {
   Users,
   Clients,
 } = require("../functions/associations/companyAssociations");
+const { Options } = require("../functions/associations/optionsAssociations");
 
 //Mail Function
 async function mailFunc(x, otp) {
@@ -74,8 +75,6 @@ routes.get("/api/company_data", async (req, res) => {
   }
 });
 
-
-//SignUP API
 routes.post("/api/companyReg", async (req, res) => {
   const { id, data } = req.body;
   console.log(data, id);
@@ -95,13 +94,22 @@ routes.post("/api/companyReg", async (req, res) => {
           password: data.password,
           phone: data.businessno,
           type: data.type,
+          email: data.email,
           UserId: id,
-          no_of_employees: 0,
-          no_of_partners: 0,
+          logo:data.image,
           legal_doc: "none",
         });
          await Users.update({CompanyId:payload.id},{where:{id:id}})
         res.status(200).json({ status: "success", payload });
+        await Options.create({
+          status:['Add status'],
+          designation:['Add designation'],
+          sources:['Add sources'],
+          services:['Add services'],
+          inv_status:['Add invoice'],
+          countries:['Add countries'],
+          CompanyId:payload.id
+        })
       } catch (e) {
         console.log(e);
       }

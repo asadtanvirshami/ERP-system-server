@@ -17,6 +17,14 @@ const Options = sequelize.define("Options", {
             type:DataTypes.JSON,
             allowNull: true,  
         },
+        inv_status:{
+            type:DataTypes.JSON,
+            allowNull: true,  
+        },
+        countries:{
+            type:DataTypes.JSON,
+            allowNull: true,  
+        },
         designation:{
             type:DataTypes.JSON,
             allowNull: true,  

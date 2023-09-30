@@ -7,7 +7,6 @@ const Op = Sequelize.Op;
 const { Users } = require("../models");
 const { Company } = require("../functions/associations/companyAssociations");
 
-//Mail Function
 async function mailFunc(x, otp) {
   let transporter = nodemailer.createTransport({
     host: "smtp-relay.sendinblue.com",
@@ -34,120 +33,79 @@ async function mailFunc(x, otp) {
   console.log("Message sent: %s", info.messageId);
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }
-//Login API
-routes.post("/api/Login", async function (req, res) {
-  // using same variable name as used in frontend
-  // destructuring
-  const { data } = req.body;
 
-try{  
-  const userVerification = await Users.findOne({  where: { email: data.email, password: data.password } });
-  if (!userVerification) {
-    res.send({ message: "invalid"});
-  }   else {
-        const userCompany = await Company.findOne({
-        where: { id: userVerification.CompanyId},
-      });
-      const payload = {
-        type:`${userVerification.type}`,
-        email: `${userVerification.email}`,
-        name: `${userVerification.name}`,
-        loginId: `${userVerification.id}`,
-        designation: `${userVerification.designation}`,
-        companyId: `${userVerification.CompanyId}`,
-        companyName: `${userCompany.name}`,
-      };
-     
-     jwt.sign(
-    payload,
-    "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
-    { expiresIn: "8760h" },
-    (err, token) => {
-      if (err) {
-        console.error('JWT sign error:', err);
-        return res.status(500).json({ message: 'Error signing token' });
-      }
-      return res.status(200).send({
+routes.post("/api/Login", async (req, res) => {
+  const { email, password } = req.body.data;
+  console.log(email,password)
+  try {
+    const user = await Users.findOne({
+      where: { email, password } // this should be hashed in a real-world scenario
+    });
+
+    if (!user) return res.send({ message: "invalid" });
+
+    const company = await Company.findOne({
+      where: { id: user.CompanyId },
+    });
+
+    const payload = {
+      type: user.type,
+      email: user.email,
+      name: user.name,
+      loginId: user.id,
+      designation: user.designation,
+      profile:user.profile_pic,
+      companyId: user.CompanyId,
+      logo:company.logo ,
+      companyName: company.name,
+    };
+
+    jwt.sign(payload,  "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm", { expiresIn: "8760h" }, (err, token) => {
+      if (err) return res.status(500).json({ message: 'Error signing token' });
+
+      res.status(200).send({
         message: "success",
         token: "BearerSplit" + token,
-        payload: payload
+        payload
       });
-    }
-  );
-  }
-  }catch(e){
-    console.log(e)
-    res.json({message:"Error occured"})
-  }
-});
-
-//SignUP API
-routes.post("/api/signUp", async (req, res) => {
-  // const otp = Math.floor(1000 + Math.random() * 9000);
-  const { type, designation, data, id } = req.body;
-  try {
-    if (type == "agent") {
-      const agentVerification = await Users.findOne({
-        where: { email: data.email },
-      });
-      if (agentVerification) {
-        res.json({ status: "error", message: "exists" });
-      } else {
-        try {
-          const payload = await Users.create({
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            password: data.password,
-            type: type,
-            designation: data.designation,
-            signature: "pending",
-            CompanyId: id,
-          });
-          // mailFunc(customer.phone, otp);
-          res.status(200).send({ message: "success", payload:payload });
-        } catch (e) {
-          res.json({
-            message: "error",
-           error:e
-          });
-        }
-      }
-    } else if (type == "admin") {
-      const adminVerification = await Users.findOne({
-        where: { email: data.email },
-      });
-      if (adminVerification) {
-        res.json({ status: "error", message: "exists" });
-      } else {
-        try {
-          const payload = await Users.create({
-            name: data.fname + " " + data.lname,
-            email: data.email,
-            phone: data.phone,
-            password: data.password,
-            designation: "pending",
-            type: type,
-            designation: designation,
-            signature: "pending",
-          });
-          res.status(200).send({ status: "success", payload });
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    } else {
-      res.json({
-        message: "error",
-        error: e,
-      });
-    }
-  } catch (error) {
-    res.json({
-      message: "error",
-      error: e,
     });
+  } catch (error) {
+    console.error(error);
+    res.json({ message: "Error occurred" });
   }
 });
 
+
+routes.post("/api/signUp", async (req, res) => {
+  if (!req.body || !req.body.data) {
+    console.log(req.body)
+    return res.status(400).json({ message: "Request body or data is missing" });
+  }
+  const { type, designation, data, id } = req.body;
+
+  try {
+    const existingUser = await Users.findOne({ where: { email: data.email } });
+    if (existingUser) return res.json({ status: "error", message: "exists" });
+
+    let name = data.name;
+    if (type === "admin") name = `${data.fname} ${data.lname}`;
+
+    const user = await Users.create({
+      name,
+      email: data.email,
+      phone: data.phone,
+      password: data.password, // this should be hashed
+      type,
+      designation: type === "agent" ? data.designation : designation,
+      signature: "pending",
+      CompanyId: id || null,
+      profile_pic: data.image
+    });
+
+    res.status(200).send({ message: "success", payload: user });
+  } catch (error) {
+    console.error(error);
+    res.json({ message: "Error occurred", error });
+  }
+});
 module.exports = routes;

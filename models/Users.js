@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
+        profile_pic:{
+            type:DataTypes.STRING
+        },
         name:{
             type:DataTypes.STRING,
             allowNull: false,

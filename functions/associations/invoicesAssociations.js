@@ -4,14 +4,14 @@ const {Sales, Invoices, Clients } = require("../../models/");
 
 // ============================  SALES  TO AGENTS ASSOCIATIONS ============================ //
 
-Invoices.hasOne(Sales,{
+Invoices.hasMany(Sales,{
     foriegnKey:{
         type: DataTypes.INTEGER
     }
 });
 Sales.belongsTo(Invoices);
 
-Clients.hasOne(Invoices,{
+Clients.hasMany(Invoices,{
     foriegnKey:{
         type: DataTypes.INTEGER
     }

@@ -23,6 +23,13 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
+        email:{
+            type:DataTypes.STRING,
+            allowNull: false,
+            validate:{
+                notEmpty: true
+            }
+        },
         type:{
             type:DataTypes.STRING,
             allowNull: false,
@@ -45,6 +52,9 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         legal_doc:{
+            type:DataTypes.STRING
+        },
+        logo:{
             type:DataTypes.STRING
         },
     })
