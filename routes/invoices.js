@@ -44,15 +44,15 @@ routes.get("/api/getInvoicebyId", async (req, res) => {
       where: { id: id },
       include: [
         {
-          model: Sales,
-        },
-        {
-          model:Company
+          model: Company,
         },
         {
           model: Clients,
         },
-      ],
+        {
+          model: Sales,
+        },
+      ]
     });
     res.status(200).send({ payload: invoice, message: "success" });
   } catch (e) {

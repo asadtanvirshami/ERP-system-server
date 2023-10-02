@@ -3,68 +3,52 @@ const Sequelize = require('sequelize');
 const routes = require("express").Router();
 const {Options, Company} = require("../functions/associations/optionsAssociations")
 
-routes.post("/api/createOptions", async (req, res) => {
-    console.log(req.body)
-    try {
-    await Options.create({
-    services:req.body
-    })
-      res.status.send(200)
-    } catch (error) {
-      console.log(); 
-      res.send(error);
-    }
-  });
+// routes.post("/api/createOptions", async (req, res) => {
+//     console.log(req.body)
+//     try {
+//     await Options.create({
+//     services:req.body
+//     })
+//       res.status.send(200)
+//     } catch (error) {
+//       console.log(); 
+//       res.send(error);
+//     }
+//   });
 
-  routes.post("/api/updateOptions", async (req, res) => {
-    console.log(req.body)
-    try {
-    await Options.update({
-    status:req.body
-    },{where:{ id: 'cb9139c4-b743-4af1-b434-36b869257506' }})
-      res.status.send(200)
-    } catch (error) {
-      console.log(); 
-      res.send(error);
-    }
-  });
-
-routes.post("/api/updateoptions", async (req, res) => {
-    const type = req.body.type
+routes.post("/api/updateOptions", async (req, res) => {
+    const {data,id,name} = req.body
+  console.log(data)
     try {   
-      if(type=='sources'){
-         await routes.update({sources:`${[req.body.name]}`},{where:{ id: 'ebda68b0-e147-4f15-ba74-0f421d895e76'}})
-      res.status.send(200)
-      }
-      if(type=='resources'){
-     await routes.update({resources:`${[req.body.name]}`},{where:{ id: 'ebda68b0-e147-4f15-ba74-0f421d895e76'}})
-      res.status.send(200)
-      }
-      if(type=='countries'){
-     await routes.update({countries:`${[req.body.name]}`},{where:{ id: 'ebda68b0-e147-4f15-ba74-0f421d895e76'}})
-      res.status.send(200)
-      }
-      if(type=='job_status'){
-     await routes.update({job_status:`${[req.body.name]}`},{where:{ id: 'ebda68b0-e147-4f15-ba74-0f421d895e76'}})
-      res.status.send(200)
-      }
+        const newd = await Options.update(
+          {
+            sources:data[0],
+            status:data[1],
+            inv_status:data[2],
+            designation:data[3],
+            countries:data[4],
+            services:data[5],
+          },
+          { where: { CompanyId: id } }
+        );
+      res.status(200).send({newd})
+
     } catch (error) {
-      console.log(); 
       res.send(error);
     }
   });
   
 routes.get("/api/getOptions", async (req, res) => {
+  const {id} = req.headers
+  console.log(id)
     try {
-     const Res = await Options.findAll()
-      res.send(Res).status(200)
+     const foundedOptions = await Options.findOne({where:{CompanyId:id}})
+     res.status(200).send({ payload: [foundedOptions], message: 'success' });
     } catch (error) {
       console.log(); 
       res.send(error);
     }
   });
 
-
-module.exports = routes;
 
 module.exports = routes;
