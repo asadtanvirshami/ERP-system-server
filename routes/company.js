@@ -62,11 +62,18 @@ routes.get("/api/company_data", async (req, res) => {
       offset: offset,
       limit: 10
     });
+    
+    const invoicePromise = Clients.findAll({
+      where: { CompanyId: id, status:'Paid' },
+      offset: offset,
+      limit: 10
+    });
 
     const promise = await Promise.all([
       usersPromise,
       salesPromise,
-      clientsPromise
+      clientsPromise,
+      invoicePromise
     ]);
 
     res.status(200).send({ payload: promise, message: 'success' });
